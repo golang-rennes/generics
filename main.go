@@ -2,25 +2,26 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 )
 
-func filter[T any](s []T, pred func(T) bool) []T {
-	res := make([]T, 0, len(s))
-	for _, x := range s {
-		if pred(x) {
-			res = append(res, x)
-		}
-	}
-	return res
+type myInt int
+
+func (i myInt) String() string {
+	return strconv.Itoa(int(i))
 }
 
-func isEven(x int) bool {
-	return x%2 == 0
+type myString string
+
+func (s myString) String() string {
+	return string(s)
+}
+
+func print[T fmt.Stringer](x T) {
+	fmt.Printf("%s\n", x.String())
 }
 
 func main() {
-	fib := []int{1, 2, 3, 5, 8, 13, 21, 34}
-	evenFib := filter(fib, isEven)
-	fmt.Println(evenFib)
-	fmt.Println()
+	print(myInt(42))
+	print(myString("foo"))
 }
