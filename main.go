@@ -4,10 +4,20 @@ import (
 	"fmt"
 )
 
-func sort[T ordered](s []T) []T {
+type lesser[T any] interface {
+	Less(x T) bool
+}
+
+type myInt int
+
+func (x myInt) Less(y myInt) bool {
+	return x < y
+}
+
+func sort[T lesser[T]](s []T) []T {
 	for i := 0; i < len(s); i++ {
 		for j := i + 1; j < len(s); j++ {
-			if s[j] < s[i] {
+			if s[j].Less(s[i]) {
 				s[j], s[i] = s[i], s[j]
 			}
 		}
@@ -15,13 +25,8 @@ func sort[T ordered](s []T) []T {
 	return s
 }
 
-type ordered interface {
-	// to use <, >
-	~int | ~float64 | ~rune | ~string
-}
-
 func main() {
-	fib := []int{13, 1, 34, 2, 3, 5, 21, 8}
+	fib := []myInt{13, 1, 34, 2, 3, 5, 21, 8}
 	sortedFib := sort(fib)
 	fmt.Println(sortedFib)
 }
