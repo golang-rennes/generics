@@ -4,17 +4,24 @@ import (
 	"fmt"
 )
 
-func index[T comparable](s []T, x T) int {
-	for i, y := range s {
-		if x == y {
-			return i
+func sort[T ordered](s []T) []T {
+	for i := 0; i < len(s); i++ {
+		for j := i + 1; j < len(s); j++ {
+			if s[j] < s[i] {
+				s[j], s[i] = s[i], s[j]
+			}
 		}
 	}
-	return -1
+	return s
+}
+
+type ordered interface {
+	// to use <, >
+	~int | ~float64 | ~rune | ~string
 }
 
 func main() {
-	fib := []int{1, 2, 3, 5, 8, 13, 21, 34}
-	i := index(fib, 8)
-	fmt.Println(i)
+	fib := []int{13, 1, 34, 2, 3, 5, 21, 8}
+	sortedFib := sort(fib)
+	fmt.Println(sortedFib)
 }
