@@ -1,32 +1,40 @@
 package main
 
 import (
-	"fmt"
+	"net/http"
+
+	"github.com/labstack/echo"
 )
 
-type lesser[T any] interface {
-	Less(x T) bool
+type Person struct {
+	Fistname string `json:"first_name"`
+	Lastname string `json:"last_name"`
+}
+type Cat struct {
+	Name string `json:"name"`
 }
 
-type myInt int
-
-func (x myInt) Less(y myInt) bool {
-	return x < y
+type Handler[T any] struct {
+	entities []T
 }
 
-func sort[T lesser[T]](s []T) []T {
-	for i := 0; i < len(s); i++ {
-		for j := i + 1; j < len(s); j++ {
-			if s[j].Less(s[i]) {
-				s[j], s[i] = s[i], s[j]
-			}
-		}
-	}
-	return s
+func (h *Handler[T]) fetch(c echo.Context) error {
+	return c.JSON(http.StatusOK, h.entities)
 }
 
 func main() {
-	fib := []myInt{13, 1, 34, 2, 3, 5, 21, 8}
-	sortedFib := sort(fib)
-	fmt.Println(sortedFib)
+	e := echo.New()
+
+	personHandler := Handler[Person]{[]Person{
+		{Fistname: "Valentin", Lastname: "Deleplace"}, {Fistname: "Gwendal", Lastname: "Leclerc"}, {Fistname: "Marc", Lastname: "Guenneguez"},
+	}}
+	catHandler := Handler[Cat]{[]Cat{
+		{Name: "Linux"}, {Name: "Houston"},
+	}}
+
+	e.GET("/persons", personHandler.fetch)
+	e.GET("/cats", catHandler.fetch)
+
+	// Start server
+	e.Logger.Fatal(e.Start(":8080"))
 }
