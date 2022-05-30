@@ -2,26 +2,19 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 )
 
-type myInt int
-
-func (i myInt) String() string {
-	return strconv.Itoa(int(i))
-}
-
-type myString string
-
-func (s myString) String() string {
-	return string(s)
-}
-
-func print[T fmt.Stringer](x T) {
-	fmt.Printf("%s\n", x.String())
+func index[T comparable](s []T, x T) int {
+	for i, y := range s {
+		if x == y {
+			return i
+		}
+	}
+	return -1
 }
 
 func main() {
-	print(myInt(42))
-	print(myString("foo"))
+	fib := []int{1, 2, 3, 5, 8, 13, 21, 34}
+	i := index(fib, 8)
+	fmt.Println(i)
 }
